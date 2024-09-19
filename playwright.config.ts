@@ -1,55 +1,97 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+
+// Load environment variables from .env file
+dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  /* Run tests in files in parallel */
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  workers: process.env.PLAYWRIGHT_WORKERS ? parseInt(process.env.PLAYWRIGHT_WORKERS) : undefined,
+  reporter: [
+    ['html'],
+    ['allure-playwright', { outputFolder: 'allure-results' }]  // Enable Allure reporting
+  ],
   use: {
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
-
+    trace: 'on-first-retry',  // Capture trace when retrying
     testIdAttribute: 'data-qa',
+    baseURL: 'https://automationexercise.com/',  // Base URL for API and web
+    headless: process.env.HEADLESS === 'false',
+    screenshot: 'only-on-failure',  // Capture screenshots on test failure
+    video: 'retain-on-failure',  // Record video on test failure
   },
-
   expect: {
-    // Maximum time expect() should wait for the condition to be met.
     timeout: 10000,
   },
-
-  // Folder for test artifacts such as screenshots, videos, traces, etc.
   outputDir: 'test-results',
-
-  // Each test is given 30 seconds.
   timeout: 60000,
 
-  /* Configure project for major browser */
+  /* Configure projects for multiple browsers and devices */
   projects: [
-
-    /* Test against desktop browsers */
-    // {
-    //   name: 'chromium',
-    //   use: {
-    //     ...devices['Desktop Chrome'],
-    //     baseURL: 'https://automationexercise.com/',
-    //     headless: true,
-    //   },
-    // },
+    // Desktop Browsers
+    {
+      name: 'chromium',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://automationexercise.com/',
+        headless: process.env.HEADLESS === 'false',
+      },
+    },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
-        baseURL: 'https://automationexercise.com/',
-        headless: true,
+        baseURL: process.env.BASE_URL || 'https://automationexercise.com/',
+        headless: process.env.HEADLESS === 'false',
       },
     },
+    {
+      name: 'webkit',
+      use: {
+        ...devices['Desktop Safari'],
+        baseURL: process.env.BASE_URL || 'https://automationexercise.com/',
+        headless: process.env.HEADLESS === 'false',
+      },
+    },
+
+    // Mobile Browsers
+    {
+      name: 'Mobile Chrome',
+      use: {
+        ...devices['Pixel 5'],
+        baseURL: process.env.BASE_URL || 'https://automationexercise.com/',
+        headless: process.env.HEADLESS === 'false',
+      },
+    },
+    {
+      name: 'Mobile Safari',
+      use: {
+        ...devices['iPhone 12'],
+        baseURL: process.env.BASE_URL || 'https://automationexercise.com/',
+        headless: process.env.HEADLESS === 'false',
+      },
+    },
+
+    // API Project for API Testing
+    {
+      name: 'api',
+      use: {
+        baseURL: process.env.API_BASE_URL || 'https://automationexercise.com/',  // API Base URL
+        extraHTTPHeaders: {
+          'Content-Type': 'application/json'
+        },
+        headless: true,  // Since this is for API testing, we don't need UI interactions
+      }
+    }
   ],
+
+  /* Add custom annotations such as environment, browser type, test description, and Jira links */
+  metadata: {
+    browser: process.env.BROWSER || 'chromium',  // Set browser type via environment variable
+    environment: process.env.ENV || 'staging',  // Define test environment
+    testDescription: 'This suite tests the functionality of the e-commerce website',
+    jiraLink: 'https://jira.example.com/browse/PROJECT-123',  // Add Jira link to test cases
+  },
 });

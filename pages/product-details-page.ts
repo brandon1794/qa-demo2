@@ -18,7 +18,7 @@ export class ProductDetailsPage {
         //await quantityField.press('Backspace');
 
         // Type the text into the quantity field
-        await quantityField.type(text);
+        await quantityField.fill(text);
 
         // Click on the Add To Cart button
         const addToCartButton = this.page.locator(this.locators.addToCart);

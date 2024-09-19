@@ -22,7 +22,7 @@ export class SignUpPage {
     }
 
     async selectMrsGender(): Promise<void> {
-        this.page.check(this.locators.genderMrsField, { timeout: 5000 });
+        (await this.page.waitForSelector(this.locators.genderMrsField)).check({ timeout: 10000 })
     }
 
     async fillPassword(password: string): Promise<void> {

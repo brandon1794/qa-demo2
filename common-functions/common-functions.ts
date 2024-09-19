@@ -1,5 +1,4 @@
-import { ElementHandle, expect, Locator, Page } from '@playwright/test';
-import { Utils } from '../common-functions/utils';
+import { ElementHandle, expect, Page } from '@playwright/test';
 
 //Common methods that I can re use in the test classes so I can only add validations and call out of functions, so if there's an error we know where to do the change
 

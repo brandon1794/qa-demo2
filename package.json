@@ -3,11 +3,33 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "test:chromium": "npx playwright test --project=chromium",
+    "test:firefox": "npx playwright test --project=firefox",
+    "test:webkit": "npx playwright test --project=webkit",
+    "test:chromium:headless": "HEADLESS=true npx playwright test --project=chromium",
+    "test:firefox:headless": "HEADLESS=true npx playwright test --project=firefox",
+    "test:webkit:headless": "HEADLESS=true npx playwright test --project=webkit",
+    "test:mobile:chrome": "npx playwright test --project='Mobile Chrome'",
+    "test:mobile:safari": "npx playwright test --project='Mobile Safari'",
+    "test:api": "npx playwright test --project=api",
+    "test:all": "npx playwright test",
+    "test:all:headless": "HEADLESS=true npx playwright test",
+    "allure:generate": "allure generate ./allure-results --clean -o ./allure-report",
+    "allure:open": "allure open ./allure-report",
+    "allure:report": "npm run allure:generate && npm run allure:open"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.33.0"
+    "@playwright/test": "^1.33.0",
+    "allure-commandline": "^2.30.0",
+    "allure-js-commons": "^3.0.0-beta.12",
+    "allure-playwright": "^3.0.0-beta.12",
+    "dotenv": "^16.4.5"
+  },
+  "dependencies": {
+    "@faker-js/faker": "^9.0.1"
   }
 }
